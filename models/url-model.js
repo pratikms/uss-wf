@@ -22,7 +22,7 @@ Counter.countDocuments({}, function (err, count) {
     if (count == 0) {
         var counter = new Counter({
             data: 'url_count',
-            seq: 1
+            seq: 10000
         });
         counter.save(function (err) {
             if (err) console.log(err);
@@ -54,51 +54,19 @@ urlSchema.pre('save', function (next) {
 
 var url = mongoose.model('url', urlSchema);
 
-// function findUrlQuery(url) {
-//     console.log('In findUrlQuery()');
-//     return module.exports.urlModel.findOne( { orig_url: url } );
-// }
-
-// TODO
 function shortenUrl(origUrl, res) {
     var shortUrl = '';
     console.log('Original URL: ', origUrl);
-    // var query = await findUrlQuery(origUrl);
-    // query
-    //     .then(function (doc) {
-    //         console.log('Doc: ', doc);
-    //     });
-        // .error(function (err) {
-        //     console.log(err);
-        // });
-
-    // query.exec(function (err, doc) {
-    //     if (err) console.log(err);
-    //     if (doc) {
-    //         console.log('URL ID: ', doc.url_id);
-    //         shortUrl = config.webhost + base58.encode(doc.url_id);
-    //     } else {
-    //         var newUrl = module.exports.urlModel({
-    //             orig_url: origUrl
-    //         });
-    //         newUrl.save(function (err) {
-    //             if (err) console.log(err);
-    //         });
-    //         shortUrl = config.webhost = base58.encode(newUrl.url_id);
-    //     }
-    //     console.log('short URL: ' + shortUrl);
-    //     return shortUrl;
-    // });
-
     module.exports.urlModel.findOne(
         { orig_url: origUrl },
         function (err, doc) {
             if (doc) {
                 console.log('URL ID: ', doc.url_id);
                 shortUrl = config.webhost + base58.encode(doc.url_id);
-                res.send({
-                    'original_url': origUrl,
-                    'short_url': shortUrl
+                res.render('shortened', { 
+                    title: 'USS-WF (URL Shortening Service with Web Filtering)', 
+                    originalUrl: origUrl, 
+                    shortenedUrl: shortUrl 
                 });
             } else {
                 var newUrl = module.exports.urlModel({
@@ -107,10 +75,10 @@ function shortenUrl(origUrl, res) {
                 newUrl.save(function (err) {
                     if (err) console.log(err);
                     shortUrl = config.webhost + base58.encode(newUrl.url_id);
-                    res.send({
-                        'original_url': origUrl,
-                        'short_url': shortUrl
-                    });
+                    res.render('shortened', { 
+                        title: 'USS-WF (URL Shortening Service with Web Filtering)', 
+                        originalUrl: origUrl, 
+                        shortenedUrl: shortUrl });
                 });
             }
             console.log('short URL: ' + shortUrl);

@@ -1,0 +1,13 @@
+extends layout
+
+block content
+  h1= title
+  p Welcome to #{title}
+  p
+    label(for="original-url") Original URL &emsp;
+    a(id="original-url" href= originalUrl target="_blank") #{originalUrl}
+    br
+    label(for="shortened-url") Shortened URL &emsp;
+    a(id="shortened-url" href= shortenedUrl target="_blank") #{shortenedUrl}
+  p
+    a(href="/") Try another

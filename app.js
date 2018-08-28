@@ -57,24 +57,6 @@ app.post('/api/shorten', function (req, res, next) {
       validUrl = false;
       res.status(412).send( { 'error': 'Invalid URL' } );
     } else {
-      console.log('in else');
-      // shortUrl = urlModel.shortenUrl(origUrl);
-
-      // urlModel.shortenUrl(origUrl).then(function (shrtUrl) {
-      //   console.log('shrtUrl');
-      //   shortUrl = shrtUrl;
-      //   res.send({
-      //     'original_url': origUrl,
-      //     'short_url': shortUrl
-      //   });
-      // });
-
-      // console.log('In main short URL: ', shortUrl);
-      // res.send({
-      //   'original_url': origUrl,
-      //   'short_url': shortUrl
-      // });
-
       urlModel.shortenUrl(origUrl, res);
     }
   });
