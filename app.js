@@ -7,12 +7,15 @@ var logger = require('morgan');
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 
+var blacklist = require('./config/blacklist');
 var urlModel = require('./models/url-model');
 var bodyParser = require('body-parser');
 var url = require('url');
 var dns = require('dns');
 
 var app = express();
+
+blacklist.configureBlacklist();
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
