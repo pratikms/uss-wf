@@ -18,7 +18,7 @@ var counterSchema = new Schema({
 var Counter = mongoose.model('Counter', counterSchema);
 
 Counter.countDocuments({}, function (err, count) {
-    console.log('There are %d documents in the collection', count);
+    // console.log('There are %d documents in the collection', count);
     if (count == 0) {
         var counter = new Counter({
             data: 'url_count',

@@ -1,76 +1,76 @@
-
-const fs = require('fs');
-const targz = require('targz');
-const readline = require('readline');
-let blacklist = {};
+var fs = require('fs');
+var targz = require('targz');
+var readline = require('readline');
+var async = require('async');
+var blacklist = {};
 
 var blacklistDir = __dirname + '/../blacklist/shallalist';
 
-function extractBlacklist() {
+async function extractBlacklist() {
     targz.decompress({
         src: blacklistDir + '.tar.gz',
         dest: blacklistDir + '/'
-    }, function (err) {
+    }, await function (err) {
         if (err) console.log(err);
         else console.log('Extracted');
     });
 }
 
-// var preprocessData = new Promise(function (preprocessDir = blacklistDir + '/BL/') {
-async function preprocessData(preprocessDir = blacklistDir + '/BL/') {
-    fs.readdir(preprocessDir, function (err, categories) {
-        if (err) {
-            console.log('Not a directory. ' + err.message);
-            return false;
-        }
-        categories.forEach(category => {
-            var categoryDir = preprocessDir + category;
-            console.log('categoryDir: ' + categoryDir);
-            fs.lstat(categoryDir, function(statErr, stats) {
-                if (statErr) {
-                    console.log('Error stating file: ' + statErr.message); 
-                    return false;
-                }
-                if (stats.isDirectory()) {
-                    console.log('Blah blah: ' + category);
-                    blacklist[category] = [];
-                    await preprocessData(categoryDir + '/');    
-                } else if (stats.isFile()) {
-                    console.log('domains present in ' + category);
-                    blacklist[category] = 'Present';    
-                }
-            });            
-        });
+// // var preprocessData = new Promise(function (preprocessDir = blacklistDir + '/BL/') {
+// async function preprocessData(preprocessDir = blacklistDir + '/BL/') {
+//     fs.readdir(preprocessDir, function (err, categories) {
+//         if (err) {
+//             console.log('Not a directory. ' + err.message);
+//             return false;
+//         }
+//         categories.forEach(category => {
+//             var categoryDir = preprocessDir + category;
+//             console.log('categoryDir: ' + categoryDir);
+//             fs.lstat(categoryDir, function(statErr, stats) {
+//                 if (statErr) {
+//                     console.log('Error stating file: ' + statErr.message); 
+//                     return false;
+//                 }
+//                 if (stats.isDirectory()) {
+//                     console.log('Blah blah: ' + category);
+//                     blacklist[category] = [];
+//                     await preprocessData(categoryDir + '/');    
+//                 } else if (stats.isFile()) {
+//                     console.log('domains present in ' + category);
+//                     blacklist[category] = 'Present';    
+//                 }
+//             });            
+//         });
 
-        // for (let i = 0; i < categories.length; i++) {
-        //     let categoryDir = preprocessDir + categories[i];
-        //     console.log('categoryDir: ' + categoryDir);
-        //     fs.lstat(categoryDir, function(statErr, stats) {
-        //         if (statErr) {
-        //             console.log('Error stating file: ' + statErr.message); 
-        //             return false;
-        //         }
-        //         if (stats.isDirectory()) {
-        //             console.log(categories[i]);
-        //             blacklist[categories[i]] = [];
-        //             preprocessData(categoryDir + '/');    
-        //         } else if (stats.isFile()) {
-        //             console.log('domains present');
-        //             blacklist[categories[i]]['domains'] = 'Present';    
-        //         }
-        //     });
+//         // for (let i = 0; i < categories.length; i++) {
+//         //     let categoryDir = preprocessDir + categories[i];
+//         //     console.log('categoryDir: ' + categoryDir);
+//         //     fs.lstat(categoryDir, function(statErr, stats) {
+//         //         if (statErr) {
+//         //             console.log('Error stating file: ' + statErr.message); 
+//         //             return false;
+//         //         }
+//         //         if (stats.isDirectory()) {
+//         //             console.log(categories[i]);
+//         //             blacklist[categories[i]] = [];
+//         //             preprocessData(categoryDir + '/');    
+//         //         } else if (stats.isFile()) {
+//         //             console.log('domains present');
+//         //             blacklist[categories[i]]['domains'] = 'Present';    
+//         //         }
+//         //     });
 
-        //     // if (fs.lstat(categoryDir).isDirectory()) {
-        //     //     console.log(categories[i]);
-        //     //     blacklist.categories[i] = {};
-        //     //     preprocessData(categoryDir + '/');
-        //     // } else if (fs.lstat(categoryDir).isFile) {
-        //     //     console.log('domains present');
-        //     //     blacklist.categories[i].domains = 'Present';
-        //     // }
-        // }
-    });
-});
+//         //     // if (fs.lstat(categoryDir).isDirectory()) {
+//         //     //     console.log(categories[i]);
+//         //     //     blacklist.categories[i] = {};
+//         //     //     preprocessData(categoryDir + '/');
+//         //     // } else if (fs.lstat(categoryDir).isFile) {
+//         //     //     console.log('domains present');
+//         //     //     blacklist.categories[i].domains = 'Present';
+//         //     // }
+//         // }
+//     });
+// });
 
 /*
 function preprocessData(preprocessDir = blacklistDir + '/BL/') {
@@ -113,25 +113,64 @@ function blacklist() {
 }
 */
 
-function configureBlacklist() {
+// function configureBlacklist() {
+//     fs.open(blacklistDir, 'r', function (err, stats) {
+//         if (err) {
+//             console.log('File does not exist. ' + err.message);
+//             extractBlacklist();
+//         }
+//         // console.log('File exists')
+//         // (preprocessData(), function () {
+//         //     console.log('BL: ');
+//         //     console.log(blacklist);
+//         // });
+        
+//         // await preprocessData
+//         // .then(function () {
+//         //     console.log('BLCB: ');
+//         //     console.log(blacklist);
+//         });
+
+//         finalJSON = preprocessData();
+//     });
+// }
+
+// async function configureBlacklist() {
+//     fs.open(blacklistDir, 'r', async function (err, stats) {
+//         if (err) {
+//             console.log('File does not exists. ' + err.message);
+//             await extractBlacklist();
+//         }
+//         console.log('File exists.');
+//     });
+// }
+
+function createBlacklistDirIfNotExists() {
     fs.open(blacklistDir, 'r', function (err, stats) {
         if (err) {
-            console.log('File does not exist. ' + err.message);
+            console.log('File does not exists. ' + err.message);
             extractBlacklist();
         }
-        // console.log('File exists')
-        // (preprocessData(), function () {
-        //     console.log('BL: ');
-        //     console.log(blacklist);
-        // });
-        
-        // await preprocessData
-        // .then(function () {
-        //     console.log('BLCB: ');
-        //     console.log(blacklist);
-        // });
+        console.log('File exists from here');
+    });
+}
 
-        finalJSON = await preprocessData();
+function outputIfExists() {
+    console.log(__filename);
+    fs.open(blacklistDir, 'r', function (err, stats) {
+        if (err) console.log('Still error');
+        console.log('File exists');
+    });
+
+}
+
+function configureBlacklist() {
+    async.waterfall([
+        createBlacklistDirIfNotExists,
+        outputIfExists,
+    ], function (waterfallErr, result) {
+        if (waterfallErr) console.log('HEEEEREE: ' + waterfallErr);
+        console.log('RESULT: ' + result);
     });
 }
 
