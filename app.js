@@ -15,7 +15,9 @@ var dns = require('dns');
 
 var app = express();
 
-blacklist.configureBlacklist();
+blacklist = blacklist.configureBlacklist(blacklist.blacklistDir);
+console.log('blacklist: ');
+console.log(JSON.stringify(blacklist.pop()));
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
