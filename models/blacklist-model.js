@@ -5,7 +5,11 @@ var config = require('./../config/config');
 var blacklist = require('./../config/blacklist');
 var categoriesToBeBlacklisted = ['porn', 'urlshortener', 'hacking'];
 
-mongoose.connect(process.env.MONGO_URI, function (err, db) {
+mongoose.connect(process.env.MONGO_URI, {
+    useNewUrlParser: true,
+    useCreateIndex: true,
+    socketTimeoutMS: 540000
+}, function (err, db) {
     if (err) throw err;
 });
 
