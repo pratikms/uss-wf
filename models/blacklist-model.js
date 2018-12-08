@@ -8,6 +8,11 @@ var categoriesToBeBlacklisted = ['porn', 'urlshortener', 'hacking'];
 mongoose.connect(process.env.MONGO_URI, {
     useNewUrlParser: true,
     useCreateIndex: true,
+    reconnectTries: Number.MAX_VALUE,
+    autoReconnect: true,
+    reconnectInterval: 300,
+    poolSize: 10,
+    connectTimeoutMS: 12000,
     socketTimeoutMS: 540000
 }, function (err, db) {
     if (err) throw err;
@@ -104,8 +109,9 @@ BlacklistCounterModel.countDocuments({}, function (err, count) {
         //     if (err) console.log(err);
         //     else console.info('%d categories stored successfully', docs.length);
         // });
+    } else {
+        console.log('Blacklist already present in database');
     }
-    console.log('Blacklist already present in database');
 });
 
 async function belongsToBlacklistedCategory(hostname) {
