@@ -12,7 +12,7 @@ mongoose.connect(process.env.MONGO_URI, function (err, db) {
 var Schema = mongoose.Schema;
 
 var blacklistCounterSchema = new Schema({
-    counter: { type: Number }
+    present: { type: Boolean }
 });
 
 var blacklistSchema = new Schema({
@@ -45,7 +45,7 @@ BlacklistCounterModel.countDocuments({}, function (err, count) {
         }
 
         var blacklistCounter = BlacklistCounterModel({
-            counter: blacklistDomainCount
+            present: true
         });
         blacklistCounter.save(function (counterErr) {
             if (counterErr) console.error(counterErr);

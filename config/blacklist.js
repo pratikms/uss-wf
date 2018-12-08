@@ -1,10 +1,31 @@
 var fs = require('fs');
-var targz = require('targz');
+// var targz = require('targz');
+var tar = require('tar');
 var path = require('path');
 var blacklist = {};
 var ignoreList = ['COPYRIGHT', 'global_usage', 'urls'];
 
 var blacklistDir = __dirname + '/../blacklist/shallalist';
+
+function extractBlacklist() {
+    // targz.decompress({
+    //     src: blacklistDir + '.tar.gz',
+    //     dest: blacklistDir + '/'
+    // }, function (err) {
+    //     if (err) console.log(err);
+    //     else console.log('Extracted');
+    // });
+
+    tar.x({
+        file: blacklistDir + '.tar.gz',
+        cwd: blacklistDir + '/',
+        sync: true
+    })
+    // .then(function () {
+    //     console.log('Extracted');
+    // })
+    ;
+}
 
 var walkSync = function (dir, fileList = []) {
     const files = fs.readdirSync(dir);
@@ -57,6 +78,12 @@ function generateBlacklistCategories(blacklist /*, blacklistCategory = [] */) {
 }
 
 function configureBlacklist() {
+    if (fs.existsSync(blacklistDir + '/BL')) {
+        console.log('shallalist file exists');
+    } else {
+        console.log('shallalist file does not exist');
+        extractBlacklist();
+    }
     var blacklist = walkSync(blacklistDir).pop().files;
     // console.log('configureBlacklist output: ');
     // console.log(JSON.stringify(blacklist.pop().files));
