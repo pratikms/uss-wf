@@ -78,7 +78,8 @@ function shortenUrl(origUrl, res) {
                     res.render('shortened', { 
                         title: 'USS-WF (URL Shortening Service with Web Filtering)', 
                         originalUrl: origUrl, 
-                        shortenedUrl: shortUrl });
+                        shortenedUrl: shortUrl 
+                    });
                 });
             }
             console.log('short URL: ' + shortUrl);

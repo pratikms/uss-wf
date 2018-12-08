@@ -1,0 +1,10 @@
+extends layout
+
+block content
+  h1= title
+  p Welcome to #{title}
+  p
+    h2= message
+    pre #{messageDescription}#[strong #{blacklistCategories}] category.
+  p
+    a(href="/") Try a different URL

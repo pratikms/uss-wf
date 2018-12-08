@@ -44,10 +44,13 @@ function generateBlacklistCategories(blacklist /*, blacklistCategory = [] */) {
         // if (blacklist[category].files[0].hasOwnProperty('category')) {
         //     blacklistCategory = generateBlacklistCategories(blacklist[category].files[0], blacklistCategory);
         // } else {
+            // TODO: Handle nested directories
+            if (blacklist[category].files[0].hasOwnProperty('domains')) {
             blacklistCategory.push({
                 category: blacklist[category].category,
                 domains: blacklist[category].files[0].domains
             });    
+        }
         // }
     }
     return blacklistCategory;
@@ -62,5 +65,39 @@ function configureBlacklist() {
     return blacklistCategory;
 }
 
+function preprocessBlacklist(blacklistCategories) {
+    var preprocessedBlacklist = [];
+    blacklistCategories.forEach(function (blacklist) {
+        // console.log(blacklist.category);
+        var category = blacklist.category;
+        var collection = 'blacklist_' + category;
+        // if (collection == 'anonvpn' || collection == 'automobile') console.log(JSON.stringify(blacklist));
+        // console.log('-------------------- ' + blacklist.category + ' --------------------');
+        // console.log(blacklist.domains);
+        var domains = blacklist.domains.filter(Boolean);
+        // blacklist.domains
+        domains
+        // .filter(function (element) {
+            //     return element != null;
+            // })
+            .forEach(function (domain) {
+                var modelledCollection = collection;
+                modelledCollection += '_' + (
+                    // for handling special case of .tumblr.com in porn
+                    domain.toLowerCase().charAt(0) == '.' ?
+                    domain.toLowerCase().charAt(1) : 
+                    domain.toLowerCase().charAt(0)
+                );
+                if (!(modelledCollection in preprocessedBlacklist)) {
+                    preprocessedBlacklist[modelledCollection] = {
+                        domains: []
+                    };
+                }
+                preprocessedBlacklist[modelledCollection].domains.push(domain.toLowerCase());
+            });
+    });
+    return preprocessedBlacklist;
+}
+
 module.exports.configureBlacklist = configureBlacklist;
-module.exports.blacklistDir = blacklistDir;
+module.exports.preprocessBlacklist = preprocessBlacklist;

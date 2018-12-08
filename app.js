@@ -58,13 +58,28 @@ app.use(bodyParser.urlencoded({
 app.post('/api/shorten', function (req, res, next) {
   var origUrl = req.body.url;
   var hostname = url.parse(origUrl).hostname;
-  var validUrl = true;
-  dns.lookup(hostname, function (err, address, family) {
+  dns.lookup(hostname, async function (err, address, family) {
     if (err || !hostname || !address) {
-      validUrl = false;
-      res.status(412).send( { 'error': 'Invalid URL' } );
+      // res.status(412).send( { 'error': 'Invalid URL' } );
+      res.status(412).render('invalid', { 
+        title: 'USS-WF (URL Shortening Service with Web Filtering)', 
+        message: 'Invalid URL',
+        messageDescription: 'Please enter a valid URL'
+      });
     } else {
-      urlModel.shortenUrl(origUrl, res);
+      belongsToBlacklistedCategory = await blacklistModel.belongsToBlacklistedCategory(hostname);
+      console.log('even after aync/ await: ');
+      // console.log(belongsToBlacklistedCategory);
+      if (belongsToBlacklistedCategory.length > 0) {
+        res.status(412).render('blacklist', {
+          title: 'USS-WF (URL Shortening Service with Web Filtering)', 
+          message: 'Blacklisted URL',
+          messageDescription: 'This URL cannot be shortened as it is blacklisted since it belongs to ',
+          blacklistCategories: belongsToBlacklistedCategory
+        });
+      } else {
+        urlModel.shortenUrl(origUrl, res);
+      }
     }
   });
 });
